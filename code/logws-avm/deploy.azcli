@@ -1,0 +1,34 @@
+// This script logs into Azure using a specified tenant ID, creates a resource group, 
+// and deploys resources using Azure Bicep templates.
+//
+// Steps:
+// 1. Log in to Azure with the specified tenant ID.
+// 2. Define variables for the resource group name, workspace name, and storage account name.
+// 3. Create a resource group in the 'swedencentral' location with verbose output.
+// 4. Deploy resources using a Bicep template with an overridden storage parameter.
+// 5. Deploy resources using another Bicep template with an automatically generated storage parameter.
+//
+// Variables:
+// - $resourceGroupName: The name of the resource group to be created and used for deployments.
+// - $workspaceName: The name of the workspace to be deployed.
+// - $storageName: The name of the storage account to be used in the deployment.
+//
+// Commands:
+// - az login: Logs into Azure.
+// - az group create: Creates a resource group.
+// - az deployment group create: Deploys resources using a Bicep template.
+
+az login --tenant 07d87066-942e-4072-8596-36dd123efc1b
+
+
+$resourceGroupName='d-evilcorp-siem'
+$workspaceName='d-evilcorp-siem'
+$storageName='devilcorp1337'
+
+az group create --name $resourceGroupName --location 'swedencentral' --verbose
+
+#with storage param override with sentinl galleryt solution ( currently bug in avm or azure resource plane)
+az deployment group create --name deploy1 --resource-group $resourceGroupName --template-file 'main.bicep' --parameters name=$workspaceName, storageName=$storageName
+
+# Deploy with storage param automatic generated from deployment name
+az deployment group create --name demoDeployment --resource-group $resourceGroupName --template-file 'mainlaw.bicep' --parameters name=$workspaceName
